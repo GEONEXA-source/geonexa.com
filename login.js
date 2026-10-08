@@ -70,18 +70,44 @@ loginForm.addEventListener("submit", async (e) => {
 
         if (window.showLoader) showLoader("Loading your workspace…");
 
-        // Route users to the workspace that matches their role.
+        // Route users to the workspace that matches their role — but first:
+        // is this the owner account, is the whole site deactivated, or is
+        // this specific account deactivated?
         let redirectTo = "dashboard.html";
         try {
             const { data: profile, error: profileError } = await supabaseClient
                 .from("profiles")
-                .select("role,user_type")
+                .select("role,user_type,is_owner,is_deactivated")
                 .eq("id", data.user.id)
                 .single();
 
-            const role = !profileError && profile ? String(profile.role || profile.user_type || "").toLowerCase() : "";
-            if (role === "admin") redirectTo = "admin-panel.html";
-            else if (role === "engineer" || role === "surveyor") redirectTo = "engineer-panel.html";
+            if (!profileError && profile?.is_owner) {
+                // Owner always goes straight to the control page, site lock
+                // or not — the owner must always be able to get in.
+                redirectTo = "owner-control.html";
+            } else {
+                // Not the owner — check whether the whole site is closed.
+                const { data: statusData } = await supabaseClient.rpc("get_site_status");
+                const status = Array.isArray(statusData) ? statusData[0] : statusData;
+
+                if (status?.maintenance_mode) {
+                    if (window.hideLoader) hideLoader();
+                    try {
+                        sessionStorage.setItem("geonexa_maintenance_message", status.maintenance_message || "");
+                    } catch (_) {}
+                    await supabaseClient.auth.signOut();
+                    window.location.href = "maintenance.html";
+                    return;
+                }
+
+                if (!profileError && profile?.is_deactivated) {
+                    redirectTo = "account-deactivated.html";
+                } else {
+                    const role = !profileError && profile ? String(profile.role || profile.user_type || "").toLowerCase() : "";
+                    if (role === "admin") redirectTo = "admin-panel.html";
+                    else if (role === "engineer" || role === "surveyor") redirectTo = "engineer-panel.html";
+                }
+            }
         } catch (lookupErr) {
             console.error("Role lookup failed; opening standard dashboard:", lookupErr);
         }
