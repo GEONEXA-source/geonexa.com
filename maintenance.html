@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Under Maintenance — GeoNEXA AI</title>
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;background:#080d13;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#e8edf2;padding:20px;}
+  .card{max-width:420px;width:100%;text-align:center;}
+  .icon{font-size:40px;margin-bottom:14px;}
+  h1{font-size:19px;font-weight:800;margin:0 0 10px;}
+  p{font-size:14px;line-height:1.5;color:#9fb0c2;margin:0 0 20px;}
+  button{background:#14b8a6;color:#04231d;border:none;padding:12px 22px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">🛠️</div>
+  <h1>We'll be right back</h1>
+  <p id="msg">We're performing scheduled maintenance. Please check back soon.</p>
+  <button onclick="location.reload()">Try again</button>
+</div>
+<script>
+  try{
+    const custom = sessionStorage.getItem("geonexa_maintenance_message");
+    if(custom) document.getElementById("msg").textContent = custom;
+  }catch(_){}
+</script>
+</body>
+</html>

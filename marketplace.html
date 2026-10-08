@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoNEXA AI — Marketplace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --bg:#080b0f; --sidebar:#0a0d12; --panel:#0f151c; --panel-alt:#121a22;
+    --border:#1d2833; --text:#f3f6f8; --muted:#8b99a6;
+    --accent:#22e0ab; --accent-dim:#16a97f; --danger:#ff6b6b; --yellow:#eab308;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:"Inter",-apple-system,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
+  a{color:inherit;text-decoration:none;}
+  .sidebar{width:230px;flex-shrink:0;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 14px;position:fixed;top:0;bottom:0;left:0;overflow-y:auto;z-index:50;}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 6px 22px;}
+  .brand .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#0d9488);display:flex;align-items:center;justify-content:center;font-weight:800;color:#06120e;}
+  nav{display:flex;flex-direction:column;gap:2px;}
+  .navlink{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:13.5px;color:var(--muted);font-weight:600;}
+  .navlink:hover{background:var(--panel-alt);color:var(--text);}
+  .navlink.active{background:rgba(34,224,171,.14);color:var(--accent);}
+  .main{margin-left:230px;flex:1;padding:22px 28px 48px;}
+  h1{font-size:24px;font-weight:800;}
+  .subtitle{font-size:12.5px;color:var(--muted);margin-top:4px;margin-bottom:20px;}
+  .tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--border);}
+  .tab-btn{background:none;border:none;color:var(--muted);font-weight:700;font-size:13px;padding:10px 14px;cursor:pointer;border-bottom:2px solid transparent;}
+  .tab-btn.active{color:var(--accent);border-color:var(--accent);}
+  .tab-pane{display:none;}
+  .tab-pane.active{display:block;}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:14px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
+  .listing-title{font-size:14px;font-weight:700;margin-bottom:4px;}
+  .listing-sub{font-size:12px;color:var(--muted);margin-bottom:10px;}
+  .listing-price{font-size:16px;font-weight:800;color:var(--accent);margin-bottom:10px;}
+  .status-pill{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(34,224,171,.15);color:var(--accent);text-transform:uppercase;}
+  .field{margin-bottom:12px;}
+  .field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px;}
+  .field input,.field textarea,.field select{width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--border);background:var(--panel-alt);color:var(--text);font-size:13px;font-family:inherit;}
+  .btn-solid{background:var(--accent);color:#06120e;border:none;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;}
+  .btn-solid:hover{background:var(--accent-dim);}
+  .btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);padding:10px 16px;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;}
+  .tax-notice{background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.35);border-radius:10px;padding:12px 14px;font-size:12px;color:#eab308;line-height:1.6;margin-bottom:16px;}
+  .empty-state{text-align:center;padding:40px 16px;color:var(--muted);}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(4,8,12,.7);z-index:100;align-items:center;justify-content:center;padding:16px;}
+  .modal-overlay.open{display:flex;}
+  .modal{width:100%;max-width:420px;background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:22px;}
+  .modal h3{font-size:16px;margin-bottom:14px;}
+  .step{display:none;}
+  .step.active{display:block;}
+  .status-msg{font-size:12px;margin-top:10px;min-height:16px;}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="brand"><div class="mark">G</div><div style="font-weight:800;font-size:14px;">GeoNEXA AI</div></div>
+  <nav>
+    <a class="navlink" href="dashboard.html">🏠 Dashboard</a>
+    <a class="navlink active" href="marketplace.html">🏘️ Marketplace</a>
+    <a class="navlink" href="notaires.html">⚖️ Notaires</a>
+    <a class="navlink" href="engineers.html">👷 Find an Engineer</a>
+    <a class="navlink" href="settings.html">⚙️ Settings</a>
+  </nav>
+</div>
+
+<div class="main">
+  <h1>Marketplace</h1>
+  <div class="subtitle">Buy and sell land directly, with OTP-secured transactions.</div>
+
+  <div class="tax-notice">
+    ⚠️ Tax on the sale of immovable property is a legal obligation and cannot be waived or removed through GeoNEXA. Declare and pay through Rwanda Revenue Authority's official process — <a href="https://www.rra.gov.rw/en/domestic-tax-services/local-government-taxes/default-title-1" target="_blank" style="color:#eab308;text-decoration:underline;">rra.gov.rw</a>.
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="browse">Browse Listings</button>
+    <button class="tab-btn" data-tab="mine">My Listings</button>
+    <button class="tab-btn" data-tab="sell">Sell Land</button>
+  </div>
+
+  <div class="tab-pane active" id="pane-browse">
+    <div class="grid" id="browseGrid"><div class="empty-state"><p>Loading listings…</p></div></div>
+  </div>
+
+  <div class="tab-pane" id="pane-mine">
+    <div class="grid" id="myGrid"><div class="empty-state"><p>Loading your listings…</p></div></div>
+  </div>
+
+  <div class="tab-pane" id="pane-sell">
+    <div class="card" style="max-width:480px;">
+      <h3 style="font-size:15px;margin-bottom:14px;">List your land for sale</h3>
+      <div class="field"><label>Title</label><input id="fTitle" placeholder="e.g. Plot in Kimisagara"></div>
+      <div class="field"><label>Description</label><textarea id="fDesc" rows="3"></textarea></div>
+      <div class="field"><label>UPI (optional)</label><input id="fUpi"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div class="field"><label>District</label><input id="fDistrict"></div>
+        <div class="field"><label>Sector</label><input id="fSector"></div>
+        <div class="field"><label>Cell</label><input id="fCell"></div>
+      </div>
+      <div class="field"><label>Price (RWF)</label><input id="fPrice" type="number"></div>
+      <button class="btn-solid" id="createListingBtn" style="width:100%;">List for Sale</button>
+      <div class="status-msg" id="sellStatus"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Buy / transaction modal -->
+<div class="modal-overlay" id="buyModal">
+  <div class="modal">
+    <h3 id="buyModalTitle">Buy this land</h3>
+
+    <div class="step active" id="stepInitiate">
+      <p style="font-size:12.5px;color:var(--muted);margin-bottom:16px;">Starting a transaction sends a verification code to your email.</p>
+      <button class="btn-solid" id="startTransactionBtn" style="width:100%;">Start Transaction & Send Code</button>
+    </div>
+
+    <div class="step" id="stepOtp">
+      <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px;">Enter the 6-digit code sent to your email.</p>
+      <input id="otpInput" placeholder="123456" maxlength="6" style="width:100%;padding:12px;border-radius:9px;border:1px solid var(--border);background:var(--panel-alt);color:var(--text);font-size:18px;text-align:center;letter-spacing:4px;">
+      <button class="btn-solid" id="verifyOtpBtn" style="width:100%;margin-top:12px;">Verify Code</button>
+      <button class="btn-outline" id="resendOtpBtn" style="width:100%;margin-top:8px;">Resend Code</button>
+    </div>
+
+    <div class="step" id="stepPayment">
+      <div class="tax-notice" style="margin-bottom:14px;">⚠️ Remember: tax on this sale must still be declared and paid through RRA — GeoNEXA only records that a payment happened, it doesn't replace your tax obligation.</div>
+      <div class="field"><label>Payment method</label>
+        <select id="fPayMethod"><option value="bank">Bank transfer</option><option value="momo">Mobile Money</option></select>
+      </div>
+      <div class="field"><label>Payment reference / transaction ID</label><input id="fPayRef" placeholder="e.g. MoMo ref or bank slip number"></div>
+      <div class="field"><label>Amount paid (RWF)</label><input id="fPayAmount" type="number"></div>
+      <button class="btn-solid" id="recordPaymentBtn" style="width:100%;">Record Payment</button>
+    </div>
+
+    <div class="step" id="stepDone">
+      <p style="font-size:13px;color:var(--accent);text-align:center;padding:20px 0;">✓ Transaction recorded. The seller and notaire (if assigned) can now proceed with the official transfer process.</p>
+    </div>
+
+    <div class="status-msg" id="buyStatus"></div>
+    <button class="btn-outline" id="closeBuyModal" style="width:100%;margin-top:14px;">Close</button>
+  </div>
+</div>
+
+<script defer src="config.js"></script>
+<script defer src="marketplace.js"></script>
+</body>
+</html>

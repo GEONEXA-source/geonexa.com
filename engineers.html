@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoNEXA AI — Find an Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{--bg:#080b0f;--sidebar:#0a0d12;--panel:#0f151c;--panel-alt:#121a22;--border:#1d2833;--text:#f3f6f8;--muted:#8b99a6;--accent:#22e0ab;--accent-dim:#16a97f;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:"Inter",-apple-system,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
+  a{color:inherit;text-decoration:none;}
+  .sidebar{width:230px;flex-shrink:0;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 14px;position:fixed;top:0;bottom:0;left:0;overflow-y:auto;}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 6px 22px;}
+  .brand .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#0d9488);display:flex;align-items:center;justify-content:center;font-weight:800;color:#06120e;}
+  nav{display:flex;flex-direction:column;gap:2px;}
+  .navlink{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:13.5px;color:var(--muted);font-weight:600;}
+  .navlink:hover{background:var(--panel-alt);color:var(--text);}
+  .navlink.active{background:rgba(34,224,171,.14);color:var(--accent);}
+  .main{margin-left:230px;flex:1;padding:22px 28px 48px;}
+  h1{font-size:24px;font-weight:800;}
+  .subtitle{font-size:12.5px;color:var(--muted);margin-top:4px;margin-bottom:20px;}
+  .tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--border);}
+  .tab-btn{background:none;border:none;color:var(--muted);font-weight:700;font-size:13px;padding:10px 14px;cursor:pointer;border-bottom:2px solid transparent;}
+  .tab-btn.active{color:var(--accent);border-color:var(--accent);}
+  .tab-pane{display:none;}
+  .tab-pane.active{display:block;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:18px;}
+  .e-name{font-size:14.5px;font-weight:700;margin-bottom:4px;}
+  .e-row{font-size:12.5px;margin-bottom:5px;color:var(--muted);}
+  .field{margin-bottom:12px;max-width:420px;}
+  .field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px;}
+  .field input{width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--border);background:var(--panel-alt);color:var(--text);font-size:13px;}
+  .btn-solid{background:var(--accent);color:#06120e;border:none;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;}
+  .status-msg{font-size:12px;margin-top:10px;min-height:16px;}
+  .empty-state{text-align:center;padding:40px 16px;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="brand"><div class="mark">G</div><div style="font-weight:800;font-size:14px;">GeoNEXA AI</div></div>
+  <nav>
+    <a class="navlink" href="dashboard.html">🏠 Dashboard</a>
+    <a class="navlink" href="marketplace.html">🏘️ Marketplace</a>
+    <a class="navlink" href="notaires.html">⚖️ Notaires</a>
+    <a class="navlink active" href="engineers.html">👷 Find an Engineer</a>
+    <a class="navlink" href="settings.html">⚙️ Settings</a>
+  </nav>
+</div>
+
+<div class="main">
+  <h1>Engineers</h1>
+  <div class="subtitle">Find a verified engineer, or get verified yourself.</div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="find">Find an Engineer</button>
+    <button class="tab-btn" data-tab="verify">Get Verified</button>
+  </div>
+
+  <div class="tab-pane active" id="pane-find">
+    <div class="grid" id="engineerGrid"><div class="empty-state"><p>Loading…</p></div></div>
+  </div>
+
+  <div class="tab-pane" id="pane-verify">
+    <div class="card" style="max-width:420px;">
+      <h3 style="font-size:15px;margin-bottom:6px;">Get verified as an engineer</h3>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">Upload a scan or photo of your diploma or license. An admin reviews it (usually within 24–48 hours) before you're listed here and get engineer access.</p>
+      <div id="verificationStatusDisplay" style="margin-bottom:14px;font-size:12.5px;color:var(--muted);"></div>
+      <button class="btn-solid" id="goVerifyBtn">Upload document & submit for review →</button>
+    </div>
+  </div>
+</div>
+
+<script defer src="config.js"></script>
+<script defer src="engineers.js"></script>
+</body>
+</html>

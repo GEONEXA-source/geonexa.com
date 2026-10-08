@@ -1,0 +1,119 @@
+<!-- GeoNEXA AI — Onboarding tour
+     Paste this whole block once into any page (e.g. dashboard.html,
+     right before </body>). Then define GEONEXA_TOUR_STEPS on that
+     page (see example below) before this script runs — a different
+     step list per page is expected, since each page has different
+     buttons to explain. -->
+
+<div id="tourOverlay" style="display:none;position:fixed;inset:0;background:rgba(4,8,12,.72);z-index:200;">
+  <div id="tourCard" style="position:absolute;max-width:300px;background:#111722;border:1px solid #14b8a6;border-radius:14px;padding:18px;box-shadow:0 12px 30px rgba(0,0,0,.5);">
+    <div style="font-size:11px;color:#7c8a99;font-weight:700;margin-bottom:6px;" id="tourStepCount"></div>
+    <div style="font-size:14px;font-weight:700;color:#e8edf2;margin-bottom:6px;" id="tourTitle"></div>
+    <div style="font-size:12.5px;color:#c7d2da;line-height:1.6;margin-bottom:16px;" id="tourBody"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <button id="tourSkipBtn" style="background:none;border:none;color:#7c8a99;font-size:12px;font-weight:600;cursor:pointer;">Skip</button>
+      <button id="tourNextBtn" style="background:#14b8a6;color:#04231d;border:none;padding:9px 18px;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// EXAMPLE — define this BEFORE the script tag that loads this file,
+// with real selectors matching the page it's on. Each step's
+// `target` is a CSS selector for the button/element to explain;
+// omit `target` for a centered welcome/closing step.
+//
+// const GEONEXA_TOUR_STEPS = [
+//   { title: "Welcome to GeoNEXA AI 👋", body: "Let's walk through what each button does. Tap Continue to start." },
+//   { target: "#mapSearchInput", title: "Search the map", body: "Type a UPI, owner name, place, or district to find a parcel." },
+//   { target: "#qaAskAI", title: "Ask AI Assistant", body: "Get instant AI-powered answers about any parcel, zoning, or risk." },
+//   { target: "#qaNewReport", title: "Generate Report", body: "Create a downloadable report for any parcel you've analyzed." },
+//   { target: "#notifBellBtn", title: "Notifications", body: "See alerts and announcements from GeoNEXA here." },
+//   { title: "You're all set! 🎉", body: "Explore GeoNEXA AI — you can restart this tour anytime from Settings." },
+// ];
+
+(function () {
+  const steps = window.GEONEXA_TOUR_STEPS || [];
+  if (!steps.length) return;
+
+  const overlay = document.getElementById("tourOverlay");
+  const card = document.getElementById("tourCard");
+  const titleEl = document.getElementById("tourTitle");
+  const bodyEl = document.getElementById("tourBody");
+  const countEl = document.getElementById("tourStepCount");
+  const nextBtn = document.getElementById("tourNextBtn");
+  const skipBtn = document.getElementById("tourSkipBtn");
+
+  let i = 0;
+  let highlighted = null;
+
+  function clearHighlight() {
+    if (highlighted) {
+      highlighted.style.position = "";
+      highlighted.style.zIndex = "";
+      highlighted.style.boxShadow = "";
+      highlighted = null;
+    }
+  }
+
+  function showStep() {
+    clearHighlight();
+    const step = steps[i];
+    countEl.textContent = `Step ${i + 1} of ${steps.length}`;
+    titleEl.textContent = step.title;
+    bodyEl.textContent = step.body;
+    nextBtn.textContent = i === steps.length - 1 ? "Done" : "Continue →";
+
+    const target = step.target ? document.querySelector(step.target) : null;
+    if (target) {
+      const rect = target.getBoundingClientRect();
+      target.style.position = "relative";
+      target.style.zIndex = "201";
+      target.style.boxShadow = "0 0 0 4px rgba(20,184,166,.5)";
+      highlighted = target;
+
+      // Position the card near the highlighted element, staying on-screen.
+      let top = rect.bottom + 12;
+      let left = rect.left;
+      if (top + 160 > window.innerHeight) top = Math.max(12, rect.top - 170);
+      if (left + 300 > window.innerWidth) left = window.innerWidth - 316;
+      card.style.top = top + "px";
+      card.style.left = Math.max(12, left) + "px";
+    } else {
+      // Centered card for welcome/closing steps.
+      card.style.top = "50%";
+      card.style.left = "50%";
+      card.style.transform = "translate(-50%, -50%)";
+    }
+  }
+
+  function endTour() {
+    overlay.style.display = "none";
+    clearHighlight();
+    try { localStorage.setItem("geonexa_tour_done", "1"); } catch (_) {}
+  }
+
+  nextBtn.addEventListener("click", () => {
+    if (i === steps.length - 1) { endTour(); return; }
+    i++;
+    showStep();
+  });
+  skipBtn.addEventListener("click", endTour);
+
+  function startTour() {
+    i = 0;
+    overlay.style.display = "block";
+    card.style.transform = "";
+    showStep();
+  }
+
+  // Auto-start once per device, on first visit only.
+  let alreadyDone = false;
+  try { alreadyDone = localStorage.getItem("geonexa_tour_done") === "1"; } catch (_) {}
+  if (!alreadyDone) startTour();
+
+  // Let a page add a "Take a tour" button anywhere with id="startTourBtn".
+  const restartBtn = document.getElementById("startTourBtn");
+  if (restartBtn) restartBtn.addEventListener("click", startTour);
+})();
+</script>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoNEXA AI — Your Public Profile</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{--bg:#080b0f;--panel:#0f151c;--panel-alt:#121a22;--border:#1d2833;--text:#f3f6f8;--muted:#8b99a6;--accent:#22e0ab;--accent-dim:#16a97f;--yellow:#eab308;--danger:#ff6b6b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:"Inter",-apple-system,sans-serif;background:radial-gradient(900px 460px at 50% -10%,rgba(34,224,171,.08),transparent 55%),var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:32px 28px;max-width:480px;width:100%;}
+  .mark{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#0d9488);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#06120e;margin:0 auto 16px;}
+  h1{font-size:19px;font-weight:800;text-align:center;margin-bottom:6px;}
+  p.sub{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:22px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;}
+  .field input,.field textarea{width:100%;padding:11px 13px;border-radius:9px;border:1px solid var(--border);background:var(--panel-alt);color:var(--text);font-size:13px;font-family:inherit;}
+  .field textarea{resize:vertical;line-height:1.5;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .btn-solid{background:var(--accent);color:#06120e;border:none;width:100%;padding:13px;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;}
+  .btn-solid:disabled{opacity:.5;cursor:not-allowed;}
+  .btn-ghost{background:none;border:none;color:var(--muted);font-size:12.5px;width:100%;text-align:center;margin-top:14px;cursor:pointer;text-decoration:underline;}
+  .status-msg{font-size:12.5px;margin-top:14px;text-align:center;min-height:18px;}
+  .info-box{background:rgba(34,224,171,.1);border:1px solid rgba(34,224,171,.3);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--accent);line-height:1.6;margin-bottom:18px;}
+  .blocked-box{text-align:center;padding:10px 0 4px;}
+  .blocked-box .icon{font-size:32px;margin-bottom:10px;}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="mark">G</div>
+    <h1>Your public profile</h1>
+    <p class="sub">This is what people see when they look you up as a verified <span id="professionLabel">professional</span> on GeoNEXA — keep it accurate so clients can actually reach you.</p>
+
+    <div id="blockedSection" style="display:none;" class="blocked-box">
+      <div class="icon">🔒</div>
+      <p id="blockedText" style="font-size:13.5px;color:var(--muted);line-height:1.6;"></p>
+    </div>
+
+    <div id="formSection" style="display:none;">
+      <div class="info-box" id="infoBox">✓ Verified — this listing is live and visible to everyone searching your profession.</div>
+
+      <div class="field">
+        <label>Phone</label>
+        <input type="text" id="fPhone" placeholder="e.g. 078xxxxxxx">
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="fEmail" placeholder="you@example.com">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>District</label>
+          <input type="text" id="fDistrict" placeholder="e.g. Huye">
+        </div>
+        <div class="field">
+          <label>Sector</label>
+          <input type="text" id="fSector" placeholder="e.g. Ngoma">
+        </div>
+      </div>
+      <div class="field" id="addressField">
+        <label>Address / office location</label>
+        <input type="text" id="fAddress" placeholder="Optional">
+      </div>
+      <div class="field" id="bioField">
+        <label>Short bio</label>
+        <textarea id="fBio" rows="3" placeholder="A line or two about your experience, specialties, or how to reach you."></textarea>
+      </div>
+
+      <button class="btn-solid" id="saveBtn">Save public profile</button>
+      <button class="btn-ghost" id="skipBtn">Skip for now, go to dashboard</button>
+      <div class="status-msg" id="statusMsg"></div>
+    </div>
+  </div>
+
+<script defer src="config.js"></script>
+<script defer src="professional-profile-setup.js"></script>
+</body>
+</html>

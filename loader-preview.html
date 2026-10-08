@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoNEXA Loader Preview</title>
+<style>
+  body{margin:0;background:#080d13;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;font-family:-apple-system,sans-serif;color:#e8edf2;}
+  button,a.btn{background:#14b8a6;color:#04231d;border:none;padding:12px 22px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;text-decoration:none;display:inline-block;}
+</style>
+</head>
+<body>
+<h2 style="font-weight:800;">Page 1</h2>
+<button id="retrigger">Show loader (action)</button>
+<a class="btn" href="loader-preview-page2.html">Go to Page 2 (real navigation)</a>
+<script src="loader.js"></script>
+<script>
+  document.getElementById("retrigger").addEventListener("click", () => {
+    withLoader("Scanning parcel boundaries…", () => new Promise(r => setTimeout(r, 300)));
+  });
+</script>
+</body>
+</html>

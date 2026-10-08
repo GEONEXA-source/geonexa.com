@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoNEXA AI — About</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#080b0f; --panel:#0f151c; --panel-alt:#121a22; --border:#1d2833; --text:#f3f6f8; --muted:#8b99a6;
+    --accent:#22e0ab; --accent-dim:#16a97f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(900px 460px at 50% -10%, rgba(34,224,171,0.08), transparent 55%), var(--bg);
+    color:var(--text); min-height:100vh; padding:24px 20px 60px;
+  }
+  a{color:var(--accent);text-decoration:none;}
+  .wrap{max-width:680px;margin:0 auto;}
+  .back{font-size:12.5px;color:var(--muted);display:inline-block;margin-bottom:22px;}
+  .hero{text-align:center;margin-bottom:32px;}
+  .mark{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#0d9488);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:24px;color:#06120e;margin:0 auto 14px;}
+  h1{font-size:26px;font-weight:800;letter-spacing:-0.01em;}
+  .tagline{font-size:13.5px;color:var(--muted);margin-top:8px;max-width:400px;margin-left:auto;margin-right:auto;line-height:1.6;}
+
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;}
+  .card h2{font-size:15px;font-weight:700;margin-bottom:10px;color:var(--accent);}
+  .card p{font-size:13.5px;line-height:1.7;color:#dbe3e8;margin-bottom:8px;}
+
+  .feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;}
+  @media (max-width:520px){.feature-grid{grid-template-columns:1fr;}}
+  .feature{background:var(--panel-alt);border:1px solid var(--border);border-radius:12px;padding:14px;}
+  .feature .ic{font-size:20px;margin-bottom:6px;}
+  .feature .t{font-size:12.5px;font-weight:700;margin-bottom:3px;}
+  .feature .d{font-size:11.5px;color:var(--muted);line-height:1.5;}
+
+  .plan-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;}
+  .plan-row:last-child{border-bottom:none;}
+  .plan-row .price{font-weight:700;color:var(--accent);}
+
+  .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;}
+  .btn-solid{background:var(--accent);color:#06120e;border:none;padding:12px 22px;border-radius:10px;font-size:13.5px;font-weight:700;}
+  .btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);padding:12px 22px;border-radius:10px;font-size:13.5px;font-weight:700;}
+
+  .disclaimer{font-size:11px;color:var(--muted);line-height:1.6;margin-top:20px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="dashboard.html">← Back to GeoNEXA</a>
+
+  <div class="hero">
+    <div class="mark">G</div>
+    <h1>GeoNEXA AI</h1>
+    <p class="tagline">Connecting the World, Spatial Sense — AI-powered land, property, and spatial risk intelligence for Rwanda.</p>
+  </div>
+
+  <div class="card">
+    <h2>What GeoNEXA does</h2>
+    <p>GeoNEXA AI is a land and property intelligence platform built for Rwanda. It combines interactive mapping, real parcel data, and AI-assisted analysis so individuals, engineers, surveyors, and institutions can make more informed land and property decisions.</p>
+  </div>
+
+  <div class="card">
+    <h2>Core features</h2>
+    <div class="feature-grid">
+      <div class="feature"><div class="ic">🗺️</div><div class="t">Map Explorer</div><div class="d">Search and browse Rwanda's land parcels on an interactive map.</div></div>
+      <div class="feature"><div class="ic">🤖</div><div class="t">AI Assistant</div><div class="d">Ask questions about a parcel, zoning, or spatial risk and get an AI-grounded answer.</div></div>
+      <div class="feature"><div class="ic">📄</div><div class="t">Reports</div><div class="d">Generate downloadable reports on parcels and locations.</div></div>
+      <div class="feature"><div class="ic">❤</div><div class="t">Saved Properties</div><div class="d">Bookmark parcels and reports to revisit anytime.</div></div>
+      <div class="feature"><div class="ic">🧭</div><div class="t">Engineer Panel</div><div class="d">A dedicated workspace for engineers and surveyors.</div></div>
+      <div class="feature"><div class="ic">💬</div><div class="t">Team Chat</div><div class="d">Engineers and surveyors can chat and share updates.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Plans</h2>
+    <div class="plan-row"><span>Weekly</span><span class="price">3,000 RWF</span></div>
+    <div class="plan-row"><span>Monthly — includes AI Assistant</span><span class="price">10,000 RWF</span></div>
+    <div class="plan-row"><span>Annual — includes AI Assistant</span><span class="price">110,000 RWF</span></div>
+    <div class="plan-row"><span>Institution (per 10 devices)</span><span class="price">90,000 RWF</span></div>
+  </div>
+
+  <div class="card">
+    <h2>Who built this</h2>
+    <p>GeoNEXA AI was founded by a team of students at the University of Rwanda, bringing together expertise in Surveying and Geomatics Engineering with modern software development. The team's academic grounding in land surveying and spatial analysis directly shapes how GeoNEXA approaches parcel data, zoning, and risk assessment — built by people who understand the domain, not just the code.</p>
+  </div>
+
+  <div class="card">
+    <h2>Help & Support</h2>
+    <p>Reach us directly, or find us on social media.</p>
+    <div class="cta" style="margin-top:10px;">
+      <a class="btn-outline" href="mailto:geosageairw@gmail.com">✉️ Email us</a>
+      <a class="btn-outline" href="https://facebook.com/GEONEXAAI" target="_blank" rel="noopener">📘 Facebook</a>
+      <a class="btn-outline" href="https://instagram.com/geonexaai" target="_blank" rel="noopener">📸 Instagram</a>
+      <a class="btn-outline" href="https://twitter.com/Geonexaai" target="_blank" rel="noopener">🐦 Twitter / X</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Get started</h2>
+    <p>Create a free account to explore the map, or subscribe to unlock reports and the AI Assistant.</p>
+    <div class="cta">
+      <a class="btn-solid" href="signup.html">Create Account →</a>
+      <a class="btn-outline" href="subscription.html">View Plans</a>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    GeoNEXA's parcel information and AI-generated analysis are provided for informational purposes only and are not a substitute for official records from Rwanda's National Land Authority. See our <a href="terms.html">Terms</a> and <a href="privacy.html">Privacy Policy</a> for more.
+  </div>
+</div>
+</body>
+</html>
