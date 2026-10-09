@@ -4,14 +4,15 @@ let isOwner = false;
 async function init(){
   if(window.showLoader) showLoader("Checking access…");
   const { data, error } = await supabaseClient.auth.getSession();
-  if(error || !data.session){ location.href = "login.html"; return; }
+  if(error || !data.session){ location.href = "owner-login.html"; return; }
 
   const { data: prof, error: profErr } = await supabaseClient
     .from("profiles").select("is_owner").eq("id", data.session.user.id).single();
 
   if(profErr || !prof?.is_owner){
     if(window.hideLoader) hideLoader();
-    location.href = "dashboard.html";
+    await supabaseClient.auth.signOut();
+    location.href = "owner-login.html";
     return;
   }
   isOwner = true;
@@ -38,6 +39,17 @@ async function setMode(deactivate){
   const msg = document.getElementById("msgInput").value.trim();
   if(window.showLoader) showLoader(deactivate ? "Deactivating site…" : "Reactivating site…");
 
+  // Force a fresh session before calling the RPC — a tab left open a
+  // while can hold a stale token that getSession() alone won't catch,
+  // and that's what causes "Not authenticated" here.
+  const { data: refreshed, error: refreshErr } = await supabaseClient.auth.refreshSession();
+  if(refreshErr || !refreshed?.session){
+    if(window.hideLoader) hideLoader();
+    alert("Your session expired. Please log in again.");
+    location.href = "owner-login.html";
+    return;
+  }
+
   const { error } = await supabaseClient.rpc("owner_set_maintenance_mode", {
     p_active: deactivate,
     p_message: msg || null
@@ -45,6 +57,15 @@ async function setMode(deactivate){
 
   if(window.hideLoader) hideLoader();
 
-  if(error){ alert("Error: " + error.message); return; }
+  if(error){
+    if(String(error.message || "").toLowerCase().includes("not authenticated") ||
+       String(error.message || "").toLowerCase().includes("not authorized")){
+      alert("Your session expired. Please log in again.");
+      location.href = "owner-login.html";
+      return;
+    }
+    alert("Error: " + error.message);
+    return;
+  }
   await refreshStatus();
 }
