@@ -20,7 +20,7 @@ signupForm.addEventListener("submit", async (e) => {
     // Password match check
     if (password !== confirmPassword) {
         passwordError.style.display = "block";
-        passwordError.scrollIntoView({ behavior: "smooth", block: "center" });
+        window.scrollTo({ top: 0, behavior: "smooth" });
         return;
     }
     passwordError.style.display = "none";
@@ -56,10 +56,11 @@ signupForm.addEventListener("submit", async (e) => {
         submitBtn.disabled = false;
         submitBtn.textContent = "Create GeoNEXA Account →";
         // Everything typed stays right where it is — nothing on this form
-        // gets cleared on failure. Scroll back up so the error is actually
-        // seen instead of sitting off-screen below whatever the person had
-        // scrolled down to, with their answers still visible above it.
-        signupForm.scrollIntoView({ behavior: "smooth", block: "start" });
+        // gets cleared on failure. Scroll to the actual top of the page
+        // (not just the top of the form) so the error is guaranteed to be
+        // visible instead of landing mid-page, with their answers still
+        // intact below it.
+        window.scrollTo({ top: 0, behavior: "smooth" });
         return;
     }
 
