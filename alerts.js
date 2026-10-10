@@ -37,7 +37,9 @@ async function loadAlerts() {
 
     const [{ data: alertRows, error: alertErr }, { data: notifRows, error: notifErr }, { data: profile }] = await Promise.all([
       supabaseClient.from("alerts").select("*").order("created_at", { ascending: false }).limit(100),
-      supabaseClient.from("notifications").select("id,title,body,created_at").order("created_at", { ascending: false }).limit(50),
+      supabaseClient.from("notifications").select("id,title,body,created_at")
+        .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
+        .order("created_at", { ascending: false }).limit(50),
       supabaseClient.from("profiles").select("notifications_last_seen_at").eq("id", session.user.id).single(),
     ]);
 
