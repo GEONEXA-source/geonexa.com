@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
     --bg:#080b0f; --panel:#0f151c; --border:#1d2833; --text:#f3f6f8; --muted:#8b99a6;
@@ -20,31 +21,63 @@
     color:var(--text); min-height:100vh; padding:24px 20px 60px;
   }
   a{color:var(--accent);text-decoration:none;}
-  .wrap{max-width:680px;margin:0 auto;}
+  .wrap{max-width:720px;margin:0 auto;}
   .back{font-size:12.5px;color:var(--muted);display:inline-block;margin-bottom:18px;}
-  .letterhead{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
-  .mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#0d9488);display:flex;align-items:center;justify-content:center;font-weight:800;color:#06120e;}
+
+  /* =========== Letterhead =========== */
+  .letterhead{
+    display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+    padding-bottom:18px;margin-bottom:22px;border-bottom:2px solid var(--accent);
+  }
+  .letterhead .brand{display:flex;align-items:center;gap:10px;}
+  .mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#0d9488);display:flex;align-items:center;justify-content:center;font-weight:800;color:#06120e;flex-shrink:0;}
   .brandname{font-weight:800;font-size:15px;}
   .brandtag{font-size:10px;color:var(--muted);}
+  .doc-id{text-align:right;font-size:11px;color:var(--muted);line-height:1.6;white-space:nowrap;}
+  .doc-id b{color:var(--text);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;}
+
   h1{font-size:20px;font-weight:800;margin-bottom:4px;}
   .meta{font-size:12px;color:var(--muted);margin-bottom:24px;}
+
+  /* =========== Prepared-for strip =========== */
+  .prepared-for{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;
+    background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:18px;
+  }
+  .prepared-for .pf-item small{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;}
+  .prepared-for .pf-item span{font-size:13px;font-weight:600;}
+
   .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;}
   .card h3{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:10px;text-transform:uppercase;letter-spacing:.03em;}
   .card p{font-size:13.5px;line-height:1.7;color:#dbe3e8;white-space:pre-wrap;}
-  .location-line{font-size:12.5px;color:var(--muted);line-height:1.7;}
+  .card p b{color:var(--text);}
+
+  .detail-grid{display:grid;grid-template-columns:140px 1fr;row-gap:8px;column-gap:10px;font-size:13px;}
+  .detail-grid dt{color:var(--muted);}
+  .detail-grid dd{color:var(--text);font-weight:600;}
+
   .actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
   .btn-solid{background:var(--accent);color:#06120e;border:none;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;}
   .btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);padding:11px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;}
   .empty-state{text-align:center;padding:60px 16px;color:var(--muted);}
   .empty-state .icon{font-size:30px;margin-bottom:10px;}
-  .disclaimer{font-size:11px;color:var(--muted);margin-top:24px;line-height:1.6;border-top:1px solid var(--border);padding-top:14px;}
+
+  .footer-block{margin-top:24px;border-top:1px solid var(--border);padding-top:16px;}
+  .disclaimer{font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:10px;}
+  .footer-ref{font-size:10.5px;color:var(--muted);font-family:ui-monospace,Menlo,Consolas,monospace;}
 
   @media print {
+    @page { margin: 16mm 14mm; }
     body{background:#fff;color:#000;padding:0;}
     .back,.actions{display:none !important;}
-    .card{background:#fff;border:1px solid #ccc;}
-    .card p, .location-line{color:#000;}
-    .disclaimer{color:#555;}
+    .letterhead{border-bottom-color:#0d9488;}
+    .mark{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .card{background:#fff;border:1px solid #ccc;break-inside:avoid;}
+    .prepared-for{background:#fafafa;border:1px solid #ccc;break-inside:avoid;}
+    .card h3{color:#0d9488;}
+    .card p, .detail-grid dd, .prepared-for span{color:#000;}
+    .detail-grid dt, .prepared-for small{color:#555;}
+    .disclaimer, .footer-ref{color:#555;}
   }
 </style>
 </head>
@@ -57,8 +90,9 @@
   </div>
 </div>
 
+<script src="config.js"></script>
 <script>
-(function(){
+(async function(){
   const raw = sessionStorage.getItem("geonexa_report_payload");
   const content = document.getElementById("content");
 
@@ -79,42 +113,107 @@
   }
 
   const esc = (s) => { const d = document.createElement("div"); d.textContent = String(s ?? ""); return d.innerHTML; };
-  const date = data.timestamp ? new Date(data.timestamp).toLocaleString() : new Date().toLocaleString();
+  const date = data.timestamp ? new Date(data.timestamp) : new Date();
   const loc = data.location;
+
+  // A stable-looking reference number: date-coded + short hash of the
+  // content, so the same analysis always reproduces the same reference
+  // (useful if someone regenerates the PDF later) without needing a
+  // backend to issue IDs.
+  function reportRef(d, payloadRaw) {
+    let hash = 0;
+    for (let i = 0; i < payloadRaw.length; i++) { hash = (hash * 31 + payloadRaw.charCodeAt(i)) | 0; }
+    const code = Math.abs(hash).toString(36).toUpperCase().slice(0, 6).padStart(6, "0");
+    const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, "0"), day = String(d.getDate()).padStart(2, "0");
+    return `GNX-${y}${m}${day}-${code}`;
+  }
+  const ref = reportRef(date, raw);
+
+  // Give labeled lines in the AI's answer ("Risk: ...", "Recommendation:
+  // ...") a bold lead-in instead of dumping it all as one flat paragraph —
+  // the higher subscription tiers are explicitly prompted to answer in
+  // short labeled sections, so this renders that structure instead of
+  // throwing it away.
+  function formatAnalysis(text) {
+    return esc(text).split("\n").map((line) => {
+      const match = line.match(/^([A-Z][A-Za-z0-9 /&-]{1,32}):\s*(.*)$/);
+      return match ? `<b>${match[1]}:</b> ${match[2]}` : line;
+    }).join("\n");
+  }
+
+  // "Prepared for" needs the signed-in user's profile — fetched here
+  // rather than trusted from sessionStorage, so the report always carries
+  // the actual authenticated submitter.
+  let preparedFor = null;
+  try {
+    if (typeof supabaseClient !== "undefined") {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        const { data: profile } = await supabaseClient
+          .from("profiles")
+          .select("full_name, role, user_type, phone, public_phone")
+          .eq("id", session.user.id)
+          .single();
+        preparedFor = {
+          name: profile?.full_name || session.user.email,
+          email: session.user.email,
+          role: profile?.role || profile?.user_type || "",
+          phone: profile?.phone || profile?.public_phone || "",
+        };
+      }
+    }
+  } catch (_) { /* report still renders fine without this block */ }
 
   content.innerHTML = `
     <div class="letterhead">
-      <div class="mark">G</div>
-      <div>
-        <div class="brandname">GeoNEXA AI</div>
-        <div class="brandtag">Connecting the World, Spatial Sense</div>
+      <div class="brand">
+        <div class="mark">G</div>
+        <div>
+          <div class="brandname">GeoNEXA AI</div>
+          <div class="brandtag">Connecting the World, Spatial Sense</div>
+        </div>
+      </div>
+      <div class="doc-id">
+        Report No.<br><b>${esc(ref)}</b>
       </div>
     </div>
-    <h1>AI Analysis Report</h1>
-    <div class="meta">Generated ${esc(date)}</div>
+
+    <h1>Land &amp; Spatial Analysis Report</h1>
+    <div class="meta">Generated ${esc(date.toLocaleString())}</div>
+
+    ${preparedFor ? `
+    <div class="prepared-for">
+      <div class="pf-item"><small>Prepared For</small><span>${esc(preparedFor.name)}</span></div>
+      ${preparedFor.role ? `<div class="pf-item"><small>Role</small><span>${esc(preparedFor.role)}</span></div>` : ""}
+      <div class="pf-item"><small>Email</small><span>${esc(preparedFor.email)}</span></div>
+      ${preparedFor.phone ? `<div class="pf-item"><small>Phone</small><span>${esc(preparedFor.phone)}</span></div>` : ""}
+    </div>` : ""}
 
     ${loc ? `
     <div class="card">
-      <h3>Location</h3>
-      <div class="location-line">
-        <b>${esc(loc.label || "Selected location")}</b><br>
-        ${loc.lat != null ? `Lat ${Number(loc.lat).toFixed(5)} · Lng ${Number(loc.lng).toFixed(5)}<br>` : ""}
-        ${loc.parcel?.upi ? `UPI: <b>${esc(loc.parcel.upi)}</b>` : ""}
-      </div>
+      <h3>Location &amp; Parcel Details</h3>
+      <dl class="detail-grid">
+        <dt>Place</dt><dd>${esc(loc.label || "Selected location")}</dd>
+        ${loc.lat != null ? `<dt>Coordinates</dt><dd>${Number(loc.lat).toFixed(5)}, ${Number(loc.lng).toFixed(5)}</dd>` : ""}
+        ${loc.parcel?.upi ? `<dt>UPI</dt><dd>${esc(loc.parcel.upi)}</dd>` : ""}
+      </dl>
     </div>` : ""}
 
     <div class="card">
-      <h3>Question</h3>
+      <h3>Question Submitted</h3>
       <p>${esc(data.message || "—")}</p>
     </div>
 
     <div class="card">
       <h3>AI Analysis</h3>
-      <p>${esc(data.reply || "—")}</p>
+      <p>${formatAnalysis(data.reply || "—")}</p>
     </div>
 
-    <div class="disclaimer">
-      This report is AI-generated and provided for informational purposes only. It is not a substitute for official records from Rwanda's National Land Authority. Verify critical decisions through official channels.
+    <div class="footer-block">
+      <div class="disclaimer">
+        This report was generated by GeoNEXA AI using available cadastral and spatial data, and is provided for informational purposes only. It is not a substitute for official records from Rwanda's National Land Authority (NLA) or a licensed surveyor's certification. Recipients should independently verify any findings here through official channels before relying on them for legal, financial, or construction decisions.
+      </div>
+      <div class="footer-ref">Reference ${esc(ref)} · geonexa.com</div>
     </div>
 
     <div class="actions">
