@@ -28,6 +28,7 @@ revoke all on function public.get_weather_email_recipients() from public, anon, 
 grant execute on function public.get_weather_email_recipients() to service_role;
 
 -- ===== PART 2: schedule (run AFTER the edge function is deployed) =====
+-- (Function slug in this project is swift-processor.)
 -- Rwanda is UTC+2, so 6:00 AM Kigali = 04:00 UTC.
 -- Replace REPLACE_WITH_YOUR_CRON_SECRET with the same value you saved as the
 -- CRON_SECRET edge-function secret.
@@ -42,7 +43,7 @@ select cron.schedule(
   '0 4 * * *',
   $$
   select net.http_post(
-    url := 'https://ogwckglzluhjwmucrodb.supabase.co/functions/v1/daily-weather-email',
+    url := 'https://ogwckglzluhjwmucrodb.supabase.co/functions/v1/swift-processor',
     headers := jsonb_build_object(
       'Content-Type', 'application/json',
       'x-cron-secret', 'REPLACE_WITH_YOUR_CRON_SECRET'
