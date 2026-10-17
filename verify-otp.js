@@ -1,3 +1,4 @@
+
 // GeoNEXA AI — Signup OTP verification
 // Requires: Supabase Dashboard → Authentication → Email Templates →
 // "Confirm signup" must include {{ .Token }} somewhere in the body
