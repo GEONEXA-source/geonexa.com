@@ -122,12 +122,36 @@ loginForm.addEventListener("submit", async (e) => {
             console.error("Role lookup failed; opening standard dashboard:", lookupErr);
         }
 
-        formStatus.textContent = "Login successful! Redirecting…";
+        // Password was correct. Before letting them in, require an emailed
+        // code: end this session, send the code, and only the code check
+        // (verify-otp.html?mode=login) creates the real session.
+        const verifyEmail = data.user.email;
+        await supabaseClient.auth.signOut();
+        const { error: otpErr } = await supabaseClient.auth.signInWithOtp({
+            email: verifyEmail,
+            options: { shouldCreateUser: false },
+        });
+        if (otpErr) {
+            if (window.hideLoader) hideLoader();
+            formStatus.textContent = /rate|seconds/i.test(otpErr.message || "")
+                ? "Too many codes requested. Wait a minute and try again."
+                : "Couldn't send your verification code. Try again.";
+            formStatus.style.color = "#e57373";
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Login to GeoNEXA →";
+            return;
+        }
+        try {
+            sessionStorage.setItem("geonexa_post_verify_dest", redirectTo);
+            sessionStorage.setItem("geonexa_pending_verify_email", verifyEmail);
+        } catch (_) {}
+
+        formStatus.textContent = "Password OK! We sent a verification code to your email…";
         formStatus.style.color = "#12b8ae";
 
         setTimeout(() => {
-            window.location.href = redirectTo;
-        }, 1200);
+            window.location.href = "verify-otp.html?mode=login&email=" + encodeURIComponent(verifyEmail);
+        }, 900);
 
     } catch (err) {
         if (window.hideLoader) hideLoader();

@@ -5,6 +5,7 @@
 // users never actually receive a 6-digit code to type in here.
 
 const params = new URLSearchParams(window.location.search);
+const mode = params.get("mode") === "login" ? "login" : "signup";
 const email = params.get("email") || sessionStorage.getItem("geonexa_pending_verify_email") || "";
 
 const emailLabel = document.getElementById("emailLabel");
@@ -14,6 +15,11 @@ const resendBtn = document.getElementById("resendBtn");
 const digits = Array.from(document.querySelectorAll(".otp-digit"));
 
 if (email) emailLabel.textContent = email;
+if (mode === "login") {
+  const h1 = document.querySelector("h1");
+  if (h1) h1.textContent = "Verify it's you";
+  verifyBtn.textContent = "Verify & Sign in →";
+}
 
 // Auto-advance between the 6 boxes, and allow pasting the full code.
 digits.forEach((input, i) => {
@@ -61,13 +67,13 @@ async function verify() {
   const { data, error } = await supabaseClient.auth.verifyOtp({
     email,
     token: code,
-    type: "signup",
+    type: mode === "login" ? "email" : "signup",
   });
 
   if (error) {
     setStatus(error.message || "Invalid or expired code.", true);
     verifyBtn.disabled = false;
-    verifyBtn.textContent = "Verify & Continue →";
+    verifyBtn.textContent = mode === "login" ? "Verify & Sign in →" : "Verify & Continue →";
     return;
   }
 
@@ -86,7 +92,9 @@ async function resend() {
   resendBtn.disabled = true;
   setStatus("Sending a new code…", false);
 
-  const { error } = await supabaseClient.auth.resend({ type: "signup", email });
+  const { error } = mode === "login"
+    ? await supabaseClient.auth.signInWithOtp({ email, options: { shouldCreateUser: false } })
+    : await supabaseClient.auth.resend({ type: "signup", email });
 
   if (error) {
     setStatus(error.message || "Couldn't resend code.", true);
