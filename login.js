@@ -135,7 +135,7 @@ loginForm.addEventListener("submit", async (e) => {
             if (window.hideLoader) hideLoader();
             formStatus.textContent = /rate|seconds/i.test(otpErr.message || "")
                 ? "Too many codes requested. Wait a minute and try again."
-                : "Couldn't send your verification code. Try again.";
+                : "Couldn't send your verification code (" + (otpErr.message || "unknown error") + "). Try again.";
             formStatus.style.color = "#e57373";
             submitBtn.disabled = false;
             submitBtn.textContent = "Login to GeoNEXA →";
