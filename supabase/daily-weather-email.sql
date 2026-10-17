@@ -10,16 +10,18 @@ language sql
 security definer
 set search_path = public, auth
 as $$
+  -- to_jsonb(p) reads optional columns by name, so this works even if a
+  -- column (province, is_deactivated, preferences) does not exist yet.
   select u.email::text,
-         p.full_name,
-         coalesce(nullif(trim(p.province), ''), 'Kigali') as place
+         to_jsonb(p) ->> 'full_name',
+         coalesce(nullif(trim(to_jsonb(p) ->> 'province'), ''), 'Kigali') as place
   from public.profiles p
   join auth.users u on u.id = p.id
   where u.email is not null
     and u.email_confirmed_at is not null
-    and coalesce(p.is_deactivated, false) = false
-    and coalesce((p.preferences -> 'notifications' ->> 'email')::boolean, true)
-    and coalesce((p.preferences -> 'notifications' ->> 'weather')::boolean, true);
+    and coalesce((to_jsonb(p) ->> 'is_deactivated')::boolean, false) = false
+    and coalesce((to_jsonb(p) -> 'preferences' -> 'notifications' ->> 'email')::boolean, true)
+    and coalesce((to_jsonb(p) -> 'preferences' -> 'notifications' ->> 'weather')::boolean, true);
 $$;
 
 revoke all on function public.get_weather_email_recipients() from public, anon, authenticated;
