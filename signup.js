@@ -81,6 +81,23 @@ signupForm.addEventListener("submit", async (e) => {
     if (window.hideLoader) hideLoader();
 
     const needsVerification = ["engineer", "notary"].includes(userType);
+    const afterVerifyDest = needsVerification ? "verify-account.html" : "dashboard.html";
+
+    // With "Confirm email" enabled in Supabase, signUp() returns no session
+    // until the emailed code is entered — send the user to the code screen.
+    if (!data?.session) {
+        try {
+            sessionStorage.setItem("geonexa_pending_verify_email", email);
+            sessionStorage.setItem("geonexa_post_verify_dest", afterVerifyDest);
+        } catch (_) {}
+        formStatus.textContent = "Account created! We sent a verification code to your email…";
+        formStatus.style.color = "#12b8ae";
+        setTimeout(() => {
+            window.location.href = "verify-otp.html?email=" + encodeURIComponent(email);
+        }, 900);
+        return;
+    }
+
     formStatus.textContent = needsVerification
         ? "Account created! Let's verify your professional credentials next…"
         : "Account created! Taking you to your dashboard…";

@@ -71,9 +71,11 @@ async function verify() {
     return;
   }
 
+  const dest = sessionStorage.getItem("geonexa_post_verify_dest") || "dashboard.html";
   sessionStorage.removeItem("geonexa_pending_verify_email");
-  setStatus("Verified! Taking you to your dashboard…", false);
-  setTimeout(() => { window.location.href = "dashboard.html"; }, 800);
+  sessionStorage.removeItem("geonexa_post_verify_dest");
+  setStatus("Verified! Taking you in…", false);
+  setTimeout(() => { window.location.href = dest; }, 800);
 }
 
 async function resend() {

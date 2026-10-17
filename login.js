@@ -61,6 +61,16 @@ loginForm.addEventListener("submit", async (e) => {
 
         if (error) {
             if (window.hideLoader) hideLoader();
+            // Account exists but the email was never verified — resend a
+            // fresh code and take them to the verification screen.
+            if (/not confirmed/i.test(error.message || "") && identifier.includes("@")) {
+                try {
+                    await supabaseClient.auth.resend({ type: "signup", email: identifier });
+                    sessionStorage.setItem("geonexa_pending_verify_email", identifier);
+                } catch (_) {}
+                window.location.href = "verify-otp.html?email=" + encodeURIComponent(identifier);
+                return;
+            }
             formStatus.textContent = error.message || "Login failed. Please check your email and password.";
             formStatus.style.color = "#e57373";
             submitBtn.disabled = false;
