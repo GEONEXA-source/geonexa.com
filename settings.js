@@ -451,7 +451,7 @@ async function handleSaveAppearance() {
 // ---------- Notifications ----------
 const DEFAULT_NOTIFICATIONS = {
   email: true, sms: false, in_app: true,
-  disputes: true, risk: true, reports: true, billing: true,
+  disputes: true, risk: true, reports: true, billing: true, weather: true,
 };
 
 async function loadNotifications(userId) {
@@ -472,6 +472,7 @@ async function loadNotifications(userId) {
   document.getElementById("notifyRisk").checked = n.risk;
   document.getElementById("notifyReports").checked = n.reports;
   document.getElementById("notifyBilling").checked = n.billing;
+  document.getElementById("notifyWeather").checked = n.weather;
 }
 
 function wireNotifications() {
@@ -495,6 +496,7 @@ async function handleSaveNotifications() {
     risk: document.getElementById("notifyRisk").checked,
     reports: document.getElementById("notifyReports").checked,
     billing: document.getElementById("notifyBilling").checked,
+    weather: document.getElementById("notifyWeather").checked,
   };
 
   try {
