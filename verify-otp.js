@@ -31,11 +31,11 @@ digits.forEach((input, i) => {
     if (e.key === "Backspace" && !input.value && digits[i - 1]) digits[i - 1].focus();
   });
   input.addEventListener("paste", (e) => {
-    const pasted = (e.clipboardData.getData("text") || "").replace(/\D/g, "").slice(0, 6);
+    const pasted = (e.clipboardData.getData("text") || "").replace(/\D/g, "").slice(0, digits.length);
     if (pasted.length) {
       e.preventDefault();
       pasted.split("").forEach((ch, idx) => { if (digits[idx]) digits[idx].value = ch; });
-      digits[Math.min(pasted.length, 6) - 1].focus();
+      digits[Math.min(pasted.length, digits.length) - 1].focus();
     }
   });
 });
@@ -51,8 +51,8 @@ function setStatus(msg, isError) {
 
 async function verify() {
   const code = getCode();
-  if (code.length !== 6) {
-    setStatus("Enter all 6 digits.", true);
+  if (code.length !== digits.length) {
+    setStatus("Enter all " + digits.length + " digits.", true);
     return;
   }
   if (!email) {
