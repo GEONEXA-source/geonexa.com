@@ -143,3 +143,20 @@ table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scro
   body.gx-float .gx-burger { display: none !important; }
   body.gx-float.gx-has-burger .main { padding-top: 16px !important; }
 }
+
+/* ================= FLIP PAGE TRANSITION ================= */
+/* Cross-page card flip (Chrome/Edge/Safari 18.2+; others just navigate normally) */
+@view-transition { navigation: auto; }
+html { perspective: 1600px; }
+::view-transition-group(root) { animation-duration: .55s; }
+::view-transition-old(root), ::view-transition-new(root) {
+  animation-duration: .55s; animation-timing-function: cubic-bezier(.4,.1,.2,1);
+  backface-visibility: hidden; mix-blend-mode: normal;
+}
+::view-transition-old(root) { animation-name: gx-flip-out; }
+::view-transition-new(root) { animation-name: gx-flip-in; }
+@keyframes gx-flip-out { to { transform: rotateY(-90deg) scale(.96); opacity: 0; } }
+@keyframes gx-flip-in { from { transform: rotateY(90deg) scale(.96); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+}
