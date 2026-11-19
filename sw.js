@@ -4,7 +4,7 @@
 // Cache-first for genuinely static assets (images, manifest) for speed.
 // Supabase API/Edge Function calls always go straight to the network.
 
-const CACHE_NAME = 'geonexa-cache-v7';
+const CACHE_NAME = 'geonexa-cache-v8';
 
 const CORE_ASSETS = [
   './manifest.json',
