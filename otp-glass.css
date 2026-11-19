@@ -1,0 +1,61 @@
+/* GeoNEXA AI — glassy OTP look + animations (verify-otp.html, reset-password.html) */
+body.gx-glass { position: relative; overflow: hidden; }
+body.gx-glass::before, body.gx-glass::after {
+  content: ""; position: fixed; z-index: 0; border-radius: 50%; filter: blur(70px); pointer-events: none;
+  width: 340px; height: 340px; opacity: .35; animation: gxOrb 14s ease-in-out infinite alternate;
+}
+body.gx-glass::before { background: #22e0ab; top: -90px; left: -80px; }
+body.gx-glass::after  { background: #0ea5e9; bottom: -110px; right: -90px; animation-delay: -7s; }
+@keyframes gxOrb { to { transform: translate(60px, 40px) scale(1.2); } }
+
+body.gx-glass .card {
+  position: relative; z-index: 1;
+  background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.03)) !important;
+  border: 1px solid rgba(255,255,255,.16) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.22);
+}
+
+.otp-row .otp-digit, .otp-row .otp-box {
+  background: rgba(255,255,255,.07) !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 6px 16px rgba(0,0,0,.25);
+  transition: border-color .2s, box-shadow .2s, transform .2s, background .2s;
+  animation: gxDigitIn .5s cubic-bezier(.2,.8,.2,1) backwards;
+}
+.otp-row > :nth-child(1) { animation-delay: .05s; } .otp-row > :nth-child(2) { animation-delay: .10s; }
+.otp-row > :nth-child(3) { animation-delay: .15s; } .otp-row > :nth-child(4) { animation-delay: .20s; }
+.otp-row > :nth-child(5) { animation-delay: .25s; } .otp-row > :nth-child(6) { animation-delay: .30s; }
+@keyframes gxDigitIn { from { opacity: 0; transform: translateY(14px) scale(.85); } }
+
+.otp-row input:focus {
+  border-color: #22e0ab !important; background: rgba(34,224,171,.10) !important;
+  box-shadow: 0 0 0 3px rgba(34,224,171,.22), 0 0 22px rgba(34,224,171,.35); transform: translateY(-2px);
+}
+.otp-row input.gx-filled { border-color: rgba(34,224,171,.6) !important; animation: gxPop .22s ease; }
+@keyframes gxPop { 50% { transform: scale(1.14); } }
+
+/* checking: light sweep across the boxes */
+.otp-row.gx-checking input { animation: gxPulse .9s ease-in-out infinite; }
+.otp-row.gx-checking > :nth-child(2) { animation-delay: .1s; } .otp-row.gx-checking > :nth-child(3) { animation-delay: .2s; }
+.otp-row.gx-checking > :nth-child(4) { animation-delay: .3s; } .otp-row.gx-checking > :nth-child(5) { animation-delay: .4s; }
+.otp-row.gx-checking > :nth-child(6) { animation-delay: .5s; }
+@keyframes gxPulse { 50% { transform: translateY(-6px); box-shadow: 0 0 24px rgba(34,224,171,.6); border-color: #22e0ab; } }
+
+/* success: green ripple, one box after another */
+.otp-row.gx-ok input { border-color: #22e0ab !important; background: rgba(34,224,171,.22) !important; color: #eafff7;
+  animation: gxOk .5s ease backwards; }
+.otp-row.gx-ok > :nth-child(2) { animation-delay: .06s; } .otp-row.gx-ok > :nth-child(3) { animation-delay: .12s; }
+.otp-row.gx-ok > :nth-child(4) { animation-delay: .18s; } .otp-row.gx-ok > :nth-child(5) { animation-delay: .24s; }
+.otp-row.gx-ok > :nth-child(6) { animation-delay: .30s; }
+@keyframes gxOk { 40% { transform: translateY(-8px) scale(1.12); box-shadow: 0 0 30px rgba(34,224,171,.8); } }
+
+/* error: red shake */
+.otp-row.gx-bad { animation: gxShake .45s ease; }
+.otp-row.gx-bad input { border-color: #ff6b6b !important; background: rgba(255,107,107,.14) !important; box-shadow: 0 0 18px rgba(255,107,107,.4); }
+@keyframes gxShake { 20%, 60% { transform: translateX(-9px); } 40%, 80% { transform: translateX(9px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  body.gx-glass::before, body.gx-glass::after, .otp-row *, .otp-row { animation: none !important; }
+}
