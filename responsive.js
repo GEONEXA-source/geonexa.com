@@ -27,6 +27,37 @@
       burger.addEventListener("click", function () { sidebar.classList.toggle("open"); });
     }
 
+
+    // ---- Floating navigation ----
+    document.body.classList.add("gx-float");
+    function setSide() { document.documentElement.style.setProperty("--gx-side", sidebar.offsetWidth + "px"); }
+    setSide(); window.addEventListener("resize", setSide);
+
+    var here = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+    var wanted = [
+      ["dashboard.html", "🏠", "Home"], ["map-explorer.html", "🗺️", "Map"],
+      ["ai-assistant.html", "🤖", "AI"], ["alerts.html", "🔔", "Alerts"]
+    ];
+    var dock = document.createElement("div");
+    dock.className = "gx-dock";
+    dock.setAttribute("role", "navigation"); dock.setAttribute("aria-label", "Quick navigation");
+    var anyOn = false;
+    wanted.forEach(function (w) {
+      var a = document.createElement("a");
+      a.href = w[0];
+      a.innerHTML = '<span class="ic">' + w[1] + "</span><span>" + w[2] + "</span>";
+      if (here === w[0]) { a.className = "on"; anyOn = true; }
+      dock.appendChild(a);
+    });
+    var menu = document.createElement("button");
+    menu.type = "button";
+    menu.setAttribute("aria-label", "Open full menu");
+    menu.innerHTML = '<span class="ic">☰</span><span>Menu</span>';
+    if (!anyOn) menu.className = "on";
+    menu.addEventListener("click", function () { sidebar.classList.toggle("open"); });
+    dock.appendChild(menu);
+    document.body.appendChild(dock);
+
     function sync() {
       backdrop.classList.toggle("show", sidebar.classList.contains("open") && window.innerWidth <= 820);
     }
